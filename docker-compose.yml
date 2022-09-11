@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  mongo:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: "$$MONGO_DB"
+      MONGO_INITDB_ROOT_USERNAME: "$$MONGO_USER"
+      MONGO_INITDB_ROOT_PASSWORD: "$$MONGO_PASSWD"
+    ports:
+      - "27017:27017"
+    networks:
+      - petbot
+
+  collect_service:
+    build: './service_collect/'
+    depends_on:
+      - mongo
+    networks:
+      - petbot
+
+  get_service:
+    build: './service_get/'
+    depends_on:
+      - mongo
+    networks:
+      - petbot
+
+  bot_service:
+    restart: on-failure
+    build: 'service_bot/'
+    networks:
+      - petbot
+
+networks:
+  petbot:
+    driver: bridge
