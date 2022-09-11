@@ -25,6 +25,11 @@ var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 	),
 )
 
+var clubKeyboard = make([][]tgbotapi.InlineKeyboardButton, 0)
+
+// check callback and b.appendClubs
+var clubsKeyboard = tgbotapi.NewInlineKeyboardMarkup(clubKeyboard...)
+
 type BotApp struct {
 	bot    *tgbotapi.BotAPI
 	config *Config
