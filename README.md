@@ -1,4 +1,10 @@
-Пет-проект "Бот расписание тренировок в фитнес-клубе".
+Пет-проект "Бот-парсер расписания тренировок в фитнес-клубах".
+- MongoDBб 
+- gRPC, 
+- BurntSushi/toml, 
+- sirupsen/logrus, 
+- gocolly/colly, 
+- go-telegram-bot-api/telegram-bot-api/v5
 
 todo: 
  gRPC между service_bot и service_collect
