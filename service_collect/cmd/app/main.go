@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/BurntSushi/toml"
-	"gitlab.com/xamust/mypetbot/collect_service/internal/app/service"
+	"github.com/xamust/petbot/service_collect/internal/app/service"
 	"log"
 )
 

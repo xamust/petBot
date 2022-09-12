@@ -3,8 +3,6 @@ package botapp
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/sirupsen/logrus"
-	"strings"
-	"time"
 )
 
 var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(
@@ -98,34 +96,34 @@ func (b *BotApp) configureBot() error {
 			bot.Send(msg)
 		} else if update.CallbackQuery != nil {
 
-			//Respond to the callback query, telling Telegram to show the user
-			// a message with the data received.
-			callback := tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data)
-			if _, err := bot.Request(callback); err != nil {
-				panic(err)
-			}
+			//	//Respond to the callback query, telling Telegram to show the user
+			//	// a message with the data received.
+			//	callback := tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data)
+			//	if _, err := bot.Request(callback); err != nil {
+			//		panic(err)
+			//	}
 
-			// And finally, send a message containing the data received.
-			msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Data)
+			//	// And finally, send a message containing the data received.
+			//	msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Data)
 
-			sb := strings.Builder{}
-			collector := fitness.CollectorInit()
-			if _, err := collector.Search(); err != nil {
-				b.logger.Error(err)
-				msg.Text = err.Error()
-			}
-			for _, i2 := range collector.GetData(msg.Text) {
-				sb.WriteString(i2)
-			}
-			msg.Text = sb.String()
-			sb.Reset()
+			//	sb := strings.Builder{}
+			//	collector := fitness.CollectorInit()
+			//	if _, err := collector.Search(); err != nil {
+			//		b.logger.Error(err)
+			//		msg.Text = err.Error()
+			//	}
+			//	for _, i2 := range collector.GetData(msg.Text) {
+			//		sb.WriteString(i2)
+			//	}
+			//	msg.Text = sb.String()
+			//	sb.Reset()
 
-			v, err := bot.Send(msg)
-			if err != nil {
-				panic(err)
-			}
-			go b.delayDelete(time.Second*60, msg.ChatID, update.CallbackQuery.Message.MessageID)
-			go b.delayDelete(time.Second*60, msg.ChatID, v.MessageID)
+			//	v, err := bot.Send(msg)
+			//	if err != nil {
+			//		panic(err)
+			//	}
+			//	go b.delayDelete(time.Second*60, msg.ChatID, update.CallbackQuery.Message.MessageID)
+			//	go b.delayDelete(time.Second*60, msg.ChatID, v.MessageID)
 		}
 	}
 	return nil

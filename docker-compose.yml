@@ -1,12 +1,20 @@
-version: '3.9'
+version: '3.5'
 services:
   mongo:
     image: mongo:latest
     restart: always
     environment:
-      MONGO_INITDB_DATABASE: "$$MONGO_DB"
-      MONGO_INITDB_ROOT_USERNAME: "$$MONGO_USER"
-      MONGO_INITDB_ROOT_PASSWORD: "$$MONGO_PASSWD"
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongodb_root_password
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongodb_root_username
+      MONGO_INITDB_DATABASE: FH
+      MONGO_USERNAME_FILE: /run/secrets/mongodb_username
+      MONGO_PASSWORD_FILE: /run/secrets/mongodb_password
+      MONGO_DATABASE: parrot
+    secrets:
+        - mongodb_root_password
+        - mongodb_root_username
+        - mongodb_password
+        - mongodb_username
     ports:
       - "27017:27017"
     networks:
@@ -35,3 +43,13 @@ services:
 networks:
   petbot:
     driver: bridge
+
+secrets:
+  mongodb_root_password:
+    file: ./mongodb/.mongodb_root_password
+  mongodb_root_username:
+    file: ./mongodb/.mongodb_root_username
+  mongodb_password:
+    file: ./mongodb/.mongodb_password
+  mongodb_username:
+    file: ./mongodb/.mongodb_username
