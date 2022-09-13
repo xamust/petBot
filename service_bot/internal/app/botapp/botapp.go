@@ -2,11 +2,9 @@ package botapp
 
 import (
 	"context"
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/sirupsen/logrus"
 	ci "github.com/xamust/petbot/service_bot/api"
-	"strings"
 	"time"
 )
 
@@ -29,9 +27,6 @@ var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 )
 
 var clubKeyboard = make([][]tgbotapi.InlineKeyboardButton, 0)
-
-// check callback and b.appendClubs
-var clubsKeyboard = tgbotapi.NewInlineKeyboardMarkup(clubKeyboard...)
 
 type BotApp struct {
 	bot    *tgbotapi.BotAPI
@@ -95,6 +90,7 @@ func (b *BotApp) configureBot() error {
 			case "status":
 				msg.Text = "I'm ok."
 			case "fitness":
+
 				clientgRPC := &client{
 					collectBot: b,
 				}
@@ -110,35 +106,37 @@ func (b *BotApp) configureBot() error {
 					b.logger.Error(err)
 					return err
 				}
-				msg.Text = "Test"
-				sb := strings.Builder{}
-				for s, s2 := range clubs.ClubsName {
-					sb.WriteString(fmt.Sprintf("%s : %s\n", s, s2))
-				}
-				msg.Text = sb.String()
-				sb.Reset()
+				msg.ReplyMarkup = b.appendClubs(clubs.ClubsName)
+				msg.Text = "Выбери клуб:"
+				//sb := strings.Builder{}
+				//for s, s2 := range clubs.ClubsName {
+				//	sb.WriteString(fmt.Sprintf("%s : %s\n", s, s2))
+				//}
+				//msg.Text = sb.String()
+				//sb.Reset()
 				//	msg.ReplyMarkup = numericKeyboard
 				//	msg.Text = "Выбери день занятий:"
 
-				//if err := clientgRPC.Close(); err != nil {
-				//	b.logger.Error(err)
-				//	return err
-				//}
+				if err := clientgRPC.Close(); err != nil {
+					b.logger.Error(err)
+					return err
+				}
 			}
 			bot.Send(msg)
 
 		} else if update.CallbackQuery != nil {
 
-			//	//Respond to the callback query, telling Telegram to show the user
-			//	// a message with the data received.
-			//	callback := tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data)
-			//	if _, err := bot.Request(callback); err != nil {
-			//		panic(err)
-			//	}
+			//Respond to the callback query, telling Telegram to show the user
+			// a message with the data received.
+			callback := tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data)
+			if _, err := bot.Request(callback); err != nil {
+				panic(err)
+			}
 
-			//	// And finally, send a message containing the data received.
-			//	msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Data)
-
+			//And finally, send a message containing the data received.
+			msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Data)
+			msg.ReplyMarkup = numericKeyboard
+			msg.Text = "Выбери день занятий:"
 			//	sb := strings.Builder{}
 			//	collector := fitness.CollectorInit()
 			//	if _, err := collector.Search(); err != nil {
@@ -151,12 +149,12 @@ func (b *BotApp) configureBot() error {
 			//	msg.Text = sb.String()
 			//	sb.Reset()
 
-			//	v, err := bot.Send(msg)
-			//	if err != nil {
-			//		panic(err)
-			//	}
+			_, err := bot.Send(msg)
+			if err != nil {
+				panic(err)
+			}
 			//	go b.delayDelete(time.Second*60, msg.ChatID, update.CallbackQuery.Message.MessageID)
-			//	go b.delayDelete(time.Second*60, msg.ChatID, v.MessageID)
+			//go b.delayDelete(time.Second*60, msg.ChatID, v.MessageID)
 		}
 	}
 	return nil
