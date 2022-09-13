@@ -2,6 +2,7 @@ package botapp
 
 type Config struct {
 	APIKey     string `toml:"api_key"`
+	PortgRPC   string `toml:"port_grpc"`
 	OwnerId    int    `toml:"owner_id"`
 	LogLevel   string `toml:"log_level"`
 	BotDebug   bool   `toml:"bot_debug"`

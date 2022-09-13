@@ -19,5 +19,9 @@ test:
 	go vet ./...
 	staticcheck ./...
 .PHONY: test
+## Compile the proto file.
+compile-grpc:
+		protoc -I api/proto --go_out=. --go-grpc_opt=require_unimplemented_servers=false --go-grpc_out=. api/proto/*.proto
+.PHONY: compile-grpc
 
 .DEFAULT_GOAL := run

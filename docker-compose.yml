@@ -20,23 +20,23 @@ services:
     networks:
       - petbot
 
-  collect_service:
+  service_collect:
     build: './service_collect/'
     depends_on:
       - mongo
     networks:
       - petbot
 
-  get_service:
+  service_get:
     build: './service_get/'
     depends_on:
       - mongo
     networks:
       - petbot
 
-  bot_service:
+  service_bot:
     restart: on-failure
-    build: 'service_bot/'
+    build: './service_bot/'
     networks:
       - petbot
 

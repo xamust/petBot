@@ -1,8 +1,13 @@
 package botapp
 
 import (
+	"context"
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/sirupsen/logrus"
+	ci "github.com/xamust/petbot/service_bot/api"
+	"strings"
+	"time"
 )
 
 var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(
@@ -90,10 +95,38 @@ func (b *BotApp) configureBot() error {
 			case "status":
 				msg.Text = "I'm ok."
 			case "fitness":
-				msg.ReplyMarkup = numericKeyboard
-				msg.Text = "Выбери день занятий:"
+				clientgRPC := &client{
+					collectBot: b,
+				}
+
+				if err = clientgRPC.Start(); err != nil {
+					b.logger.Error(err)
+					return err
+				}
+
+				ctx, _ := context.WithTimeout(context.Background(), time.Second) //cancel() ??
+				clubs, err := clientgRPC.infoClient.GetClubs(ctx, &ci.Club{})
+				if err != nil {
+					b.logger.Error(err)
+					return err
+				}
+				msg.Text = "Test"
+				sb := strings.Builder{}
+				for s, s2 := range clubs.ClubsName {
+					sb.WriteString(fmt.Sprintf("%s : %s\n", s, s2))
+				}
+				msg.Text = sb.String()
+				sb.Reset()
+				//	msg.ReplyMarkup = numericKeyboard
+				//	msg.Text = "Выбери день занятий:"
+
+				//if err := clientgRPC.Close(); err != nil {
+				//	b.logger.Error(err)
+				//	return err
+				//}
 			}
 			bot.Send(msg)
+
 		} else if update.CallbackQuery != nil {
 
 			//	//Respond to the callback query, telling Telegram to show the user

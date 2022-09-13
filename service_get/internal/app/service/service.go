@@ -1,12 +1,12 @@
 package service
 
 import (
-	"context"
 	"github.com/sirupsen/logrus"
-	"github.com/xamust/petbot/service_get/internal/app/model"
+	ci "github.com/xamust/petbot/service_get/api"
 	"github.com/xamust/petbot/service_get/internal/app/parsefh"
 	"github.com/xamust/petbot/service_get/internal/app/store"
-	"go.mongodb.org/mongo-driver/bson"
+	"google.golang.org/grpc"
+	"net"
 )
 
 type CollectService struct {
@@ -69,24 +69,24 @@ func (s *CollectService) StartCollect() error {
 		return err
 	}
 
-	//store ops...
-	s.logger.Info("Data extract...")
-	var result model.ClubData
-	filter := bson.D{{"name", "на пулковском"}}
+	//gRPC...
+	s.logger.Info("Get data...")
 
-	err := s.store.Collection.FindOne(context.TODO(), filter).Decode(&result)
+	listengRPS, err := net.Listen("tcp", s.config.PortgRPC)
 	if err != nil {
 		s.logger.Error(err)
 		return err
 	}
-	s.logger.Info("Found a single document: %+v\n", result)
 
-	if err = s.store.Disconnect(); err != nil {
-		s.logger.Error(err)
+	serviceCollect := grpc.NewServer()
+	ci.RegisterClubsInfoServer(serviceCollect, &server{collectService: s})
+
+	s.logger.Infof("Starting gRPC listener on port: %v ...", s.config.PortgRPC)
+
+	if err = serviceCollect.Serve(listengRPS); err != nil {
+		s.logger.Error("failed to serve: %v", err)
 		return err
 	}
-
-	s.logger.Info("get current FH club success")
 
 	return nil
 }
