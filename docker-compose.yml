@@ -9,7 +9,6 @@ services:
       MONGO_INITDB_DATABASE: FH
       MONGO_USERNAME_FILE: /run/secrets/mongodb_username
       MONGO_PASSWORD_FILE: /run/secrets/mongodb_password
-      MONGO_DATABASE: parrot
     secrets:
         - mongodb_root_password
         - mongodb_root_username
